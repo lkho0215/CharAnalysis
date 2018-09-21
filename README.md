@@ -1,2 +1,2 @@
 # CharAnalysis
-Simple demon on classifying alphabets or non alphabets image with scikit-learn
+Simple prototype on classifying alphabets or non alphabets image with scikit-learn

@@ -6,6 +6,7 @@ from skimage import data, exposure
 from skimage import io
 import os
 from skimage.transform import rescale, resize, downscale_local_mean
+from skimage.color import rgb2gray
 
 import numpy as np
 from tqdm import tqdm
@@ -17,7 +18,6 @@ from sklearn.externals import joblib
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import KFold
-
 import math
 
 def calc_hog_vec(file_path):
@@ -33,12 +33,12 @@ def calc_hog_vec(file_path):
         padding =(60 - size[1])//2
         npad = ((0, 0), (padding, padding), (0,0))
 
-    image = resize(image, size, anti_aliasing=True)
+    image = resize(image, size)
     image = np.pad(image, npad,  mode='constant', constant_values=0)
-    image = resize(image, (60,60), anti_aliasing=True)
-
+    image = resize(image, (60,60))
+    image = rgb2gray(image)
     fd, hog_image = hog(image, orientations=8, pixels_per_cell=(6, 6), block_norm='L2-Hys',
-                        cells_per_block=(1, 1), visualize=True, multichannel=True, feature_vector=True)
+                        cells_per_block=(1, 1), visualise=True, feature_vector=True)
 
     # print(fd.shape)
 
@@ -61,10 +61,10 @@ def calc_hog_vec(file_path):
     return fd
 
 
-def get_data():
+def get_data(noise_path, letter_path):
     X = []
     y = []
-    data_dir = "./data/noise"
+    data_dir = noise_path
     for file in tqdm(os.listdir(data_dir)):
         if file.endswith(".jpg"):
             file_path = os.path.join(data_dir, file)
@@ -72,7 +72,7 @@ def get_data():
             X.append(hog_vec)
             y.append(0)
 
-    data_dir = "./data/letter"
+    data_dir = letter_path
     for file in tqdm(os.listdir(data_dir)):
         if file.endswith(".jpg"):
             file_path = os.path.join(data_dir, file)
@@ -181,7 +181,7 @@ def rough_classify():
 
 def main():
 
-    X, y = get_data()
+    X, y = get_data("./data/noise", "./data/letter")
     kf = KFold(n_splits=10, shuffle=True)
     kf.get_n_splits(X)
 

@@ -11,12 +11,8 @@ import numpy as np
 from tqdm import tqdm
 
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
-from sklearn.metrics import average_precision_score
 from sklearn import svm
 from sklearn.externals import joblib
-from skimage.util import random_noise
-
-from scipy import ndimage
 
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
